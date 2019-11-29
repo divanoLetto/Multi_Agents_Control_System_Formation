@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import time
-import setting
+
 
 class PositionTable3D:
     def __init__(self, robotVectors, canvas, ax):
@@ -8,6 +8,7 @@ class PositionTable3D:
         self.ax = ax
         self.table = {}
         self.initPlot(robotVectors)
+        self.changed_trajectory_bool = False
 
     def initPlot(self, robotVectors):
         print("init position table plot function")
@@ -28,7 +29,7 @@ class PositionTable3D:
             self.xdatas.append([])
             self.ydatas.append([])
             self.zdatas.append([])
-            line, = self.ax.plot(self.xdatas[i], self.ydatas[i], self.zdatas[i], marker='o', color=self.colors[i % 11], linestyle='dashed', linewidth=2, markersize=4)
+            line, = self.ax.plot(self.xdatas[i], self.ydatas[i], self.zdatas[i], marker='o', color=self.colors[i % 10], linestyle='dashed', linewidth=2, markersize=4)
             self.lines.append(line)
 
             self.xdata_last.append([])
@@ -37,7 +38,7 @@ class PositionTable3D:
             last_line, = self.ax.plot(self.xdata_last[i], self.ydata_last[i], self.zdata_last[i], marker='o', markerfacecolor='white', markersize=7, zorder=5)
             self.line_last_position.append(last_line)
 
-    def plotRobotsLive(self, robotsVector, show_formation_lines):
+    def plotRobotsLive(self, robotsVector, show_formation_lines, show_trajectory_line, show_poins_line):
 
         hash_position = {}
         i = 0
@@ -54,9 +55,10 @@ class PositionTable3D:
             self.xdata_last[i].clear()
             self.ydata_last[i].clear()
             self.zdata_last[i].clear()
-            self.xdata_last[i].append(robot_position[0])
-            self.ydata_last[i].append(robot_position[1])
-            self.zdata_last[i].append(robot_position[2])
+            if show_poins_line:
+                self.xdata_last[i].append(robot_position[0])
+                self.ydata_last[i].append(robot_position[1])
+                self.zdata_last[i].append(robot_position[2])
             self.line_last_position[i].set_xdata(self.xdata_last[i])
             self.line_last_position[i].set_ydata(self.ydata_last[i])
             self.line_last_position[i].set_3d_properties(self.zdata_last[i])
@@ -68,7 +70,6 @@ class PositionTable3D:
             del l
         if show_formation_lines:
             lines_formation_structure = []
-            print("show_formation_lines")
             for robot1 in robotsVector:
                 for robot2 in robotsVector:
                     if robot2 in robot1.neighbour and [robot2, robot1] not in lines_formation_structure:
@@ -83,11 +84,17 @@ class PositionTable3D:
                 form_structure_line.set_3d_properties(form_structure_data_z)
                 self.structure_lines.append(form_structure_line)
 
-        print("start draw")
+        if not show_trajectory_line:
+            for line in self.lines:
+                line.set_visible(False)
+                self.changed_trajectory_bool = True
+        if show_trajectory_line and self.changed_trajectory_bool:
+            for line in self.lines:
+                line.set_visible(True)
+                self.changed_trajectory_bool = False
+
         self.canvas.draw()
         self.canvas.flush_events()
-        print("end draw")
-        time.sleep(setting.delay_time)
 
     def delete_lines(self):
         while self.lines:

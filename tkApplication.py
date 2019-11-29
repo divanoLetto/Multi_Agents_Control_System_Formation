@@ -107,6 +107,8 @@ class Application(tk.Frame):
         plotMenu = tk.Menu(menubar)
         menubar.add_cascade(label="Plot", menu=plotMenu)
         plotMenu.add_command(label="Show/Hide edges", command=lambda: self.show_hide_formation())
+        plotMenu.add_command(label="Show/Hide trajectory", command=lambda: self.show_hide_trajectory())
+        plotMenu.add_command(label="Show/Hide robots", command=lambda: self.show_hide_points())
         plotMenu.add_separator()
         plotMenu.add_command(label="2D plot", command=lambda: self.set_2D_plot())
         plotMenu.add_command(label="3D plot", command=lambda: self.set_3D_plot())
@@ -377,6 +379,7 @@ class Application(tk.Frame):
         self.simulation.set_formation_note(CubeNote)
         self.var_formation.set(self.simulation.formation_note.getName())  # update info frame
         self.simulation.num_robots = 8  # reset the number of robots according to the formation
+        self.var_robot_number.set(self.simulation.num_robots)
         self.simulation.formation_changed = True
 
     def make_free_formation(self):
@@ -464,6 +467,18 @@ class Application(tk.Frame):
         else:
             self.simulation.show_formation_lines = True
 
+    def show_hide_trajectory(self):
+        if self.simulation.show_trajectory_lines:
+            self.simulation.show_trajectory_lines = False
+        else:
+            self.simulation.show_trajectory_lines = True
+
+    def show_hide_points(self):
+        if self.simulation.show_poins_line:
+            self.simulation.show_poins_line = False
+        else:
+            self.simulation.show_poins_line = True
+
     def initial_condition(self):
         num_robots = self.simulation.num_robots
         pts = []
@@ -506,7 +521,8 @@ class Application(tk.Frame):
                                                               free_formation_saves=free_formation_structs_saves,
                                                               last_free_formation_name=last_free_formation_name,
                                                               vel_x=self.simulation.desidered_vel_x,
-                                                              vel_y=self.simulation.desidered_vel_y)
+                                                              vel_y=self.simulation.desidered_vel_y,
+                                                              vel_z=self.simulation.desidered_vel_z)
         print("Num robots: " + str(num_robots))
         print("Formation note: " + formation_note.getName())
         print("Robot type: " + str(robot_type))
@@ -561,7 +577,7 @@ class Application(tk.Frame):
         while self.simulation.get_time() < self.simulation.get_max_time() and self.simulation.stop_execution is False:
             self.simulation.update_time()
             self.var_time.set(self.simulation.current_time)
-            positions_table.plotRobotsLive(robots_vector, self.simulation.show_formation_lines)
+            positions_table.plotRobotsLive(robots_vector, self.simulation.show_formation_lines, self.simulation.show_trajectory_lines, self.simulation.show_poins_line)
             updateRobots(robots_vector, self.simulation.get_step_time())
             if self.simulation.formation_changed:
                 print("formation changed, calcolating new formation in start function")

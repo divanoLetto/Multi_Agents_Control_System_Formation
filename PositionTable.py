@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import time
-import setting
+
 
 class PositionTable:
     def __init__(self, robotVectors, canvas, ax):
@@ -8,6 +8,7 @@ class PositionTable:
         self.ax = ax
         self.table = {}
         self.initPlot(robotVectors)
+        self.changed_trajectory_bool = False
 
     def initPlot(self, robotVectors):
         print("init position table plot function")
@@ -25,7 +26,7 @@ class PositionTable:
         for i in range(len(robotVectors)):
             self.xdatas.append([])
             self.ydatas.append([])
-            line, = self.ax.plot(self.xdatas[i], self.ydatas[i], marker='o', color=self.colors[i % 9], linestyle='dashed', linewidth=2, markersize=4)
+            line, = self.ax.plot(self.xdatas[i], self.ydatas[i], marker='o', color=self.colors[i % len(self.colors)], linestyle='dashed', linewidth=2, markersize=4)
             self.lines.append(line)
 
             self.xdata_last.append([])
@@ -33,7 +34,7 @@ class PositionTable:
             last_line, = self.ax.plot(self.xdata_last[i], self.ydata_last[i],  marker='o', markerfacecolor='white', markersize=7, zorder=5)
             self.line_last_position.append(last_line)
 
-    def plotRobotsLive(self, robotsVector, show_formation_lines):
+    def plotRobotsLive(self, robotsVector, show_formation_lines, show_trajectory_line, show_poins_line):
 
         hash_position = {}
         i = 0
@@ -47,8 +48,9 @@ class PositionTable:
 
             self.xdata_last[i].clear()
             self.ydata_last[i].clear()
-            self.xdata_last[i].append(robot_position[0])
-            self.ydata_last[i].append(robot_position[1])
+            if show_poins_line:
+                self.xdata_last[i].append(robot_position[0])
+                self.ydata_last[i].append(robot_position[1])
             self.line_last_position[i].set_xdata(self.xdata_last[i])
             self.line_last_position[i].set_ydata(self.ydata_last[i])
             i += 1
@@ -71,9 +73,18 @@ class PositionTable:
                 form_structure_line.set_ydata(form_structure_data_y)
                 self.structure_lines.append(form_structure_line)
 
+        if not show_trajectory_line:
+            for line in self.lines:
+                line.set_visible(False)
+                self.changed_trajectory_bool = True
+        if show_trajectory_line and self.changed_trajectory_bool:
+            for line in self.lines:
+                line.set_visible(True)
+                self.changed_trajectory_bool = False
+
+
         self.canvas.draw()
         self.canvas.flush_events()
-        #time.sleep(setting.delay_time)
 
     def delete_lines(self):
         while self.lines:

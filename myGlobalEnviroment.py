@@ -50,9 +50,11 @@ class myGlobalEnviroment:
     def get_relative_cos_sin_theta_between_robots(robot1, robot2):
         abs_cos_sin_theta = myGlobalEnviroment.get_absolute_cos_sin_theta_between_robots(robot1, robot2)
         vectorAbsBase = abs_cos_sin_theta
-        C = np.array([[math.cos(robot1.theta), -math.sin(robot1.theta)], [math.sin(robot1.theta), math.cos(robot1.theta)]])
-        Cinverse = np.linalg.inv(C)
+        # C = np.array([[math.cos(robot1.theta), -math.sin(robot1.theta)], [math.sin(robot1.theta), math.cos(robot1.theta)]])
+        # Cinverse = np.linalg.inv(C)
+        Cinverse = np.array([[math.cos(robot1.theta), +math.sin(robot1.theta)], [-math.sin(robot1.theta), math.cos(robot1.theta)]])
         vectorRobot1base = Cinverse.dot(vectorAbsBase)
+
         return vectorRobot1base
 
     @staticmethod

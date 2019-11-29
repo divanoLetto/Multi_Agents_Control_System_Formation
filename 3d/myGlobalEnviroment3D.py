@@ -25,7 +25,6 @@ class myGlobalEnviroment3D:
     @staticmethod
     def get_vers_robot_base(robot1, robot2):
 
-        r_matrix = robot1.get_rotation_matrix()
         v = np.subtract(robot2.getAbsolutePos(),  robot1.getAbsolutePos())
         v_x = v[0]
         v_y = v[1]
@@ -35,6 +34,16 @@ class myGlobalEnviroment3D:
 
         length = np.linalg.norm(vector)
         unit_v = vector / length
-        vers_robot_base = np.dot(unit_v, r_matrix)
+
+        r_matrix = robot1.get_rotation_matrix()
+        r_matrix_inverse = np.linalg.inv(r_matrix)
+        
+        vers_robot_base = r_matrix_inverse.dot(unit_v)
+
+        # length = np.linalg.norm(vers_robot_base)
+        # vers_robot_base = vers_robot_base / length
+
+        tmp = vers_robot_base[0]**2+vers_robot_base[1]**2 + vers_robot_base[2] ** 2
+
         return vers_robot_base
 

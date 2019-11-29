@@ -748,29 +748,19 @@ class LinearHorizontalFormationDistanceSingleIntegrator3D(LinearFormationDistanc
 
         for i in range(len(robotVector)):
             robotVector[i].disconnect()
-        for i in range(len(robotVector)):
-            if i == 0:
-                Robot3D.connect(robotVector[i], robotVector[i + 1])
+        for i in range(len(robotVector) - 1):
+            Robot3D.connect(robotVector[i], robotVector[i + 1])
+            if i + 2 < len(robotVector):
                 Robot3D.connect(robotVector[i], robotVector[i + 2])
-            elif i == (len(robotVector) - 1):
-                Robot3D.connect(robotVector[i], robotVector[i - 2])
-            else:
-                Robot3D.connect(robotVector[i], robotVector[i + 1])
+            if i + 3 < len(robotVector):
+                Robot3D.connect(robotVector[i], robotVector[i + 3])
 
-        for i in range(len(robotVector)):
-            if i == 0:
-                robotVector[i].hashRole[i + 1] = self.side
-                robotVector[i].hashRole[i + 2] = self.side*2
-            elif i == (len(robotVector)-1):
-                robotVector[i].hashRole[i - 2] = self.side*2
-                robotVector[i].hashRole[i - 1] = self.side
-            else:
-                robotVector[i].hashRole[i+1] = self.side
-                robotVector[i].hashRole[i-1] = self.side
-                if i == 2:
-                    robotVector[i].hashRole[0] = self.side*2
-                elif i == len(robotVector)-3:
-                    robotVector[i].hashRole[len(robotVector)-1] = self.side * 2
+        for i in range(len(robotVector) - 1):
+            self.set_hash_role(robotVector, i, i + 1, self.side)
+            if i + 2 < len(robotVector):
+                self.set_hash_role(robotVector, i, i + 2, self.side * 2)
+            if i + 3 < len(robotVector):
+                self.set_hash_role(robotVector, i, i + 3, self.side * 3)
 
     def makeFormationRobot(self):
         return RobotDistanceSingleIntegrator3D.makeRandomRobot()
@@ -791,29 +781,19 @@ class LinearHorizontalFormationDistanceDoubleIntegrator3D(LinearFormationDistanc
 
         for i in range(len(robotVector)):
             robotVector[i].disconnect()
-        for i in range(len(robotVector)):
-            if i == 0:
-                Robot3D.connect(robotVector[i], robotVector[i + 1])
+        for i in range(len(robotVector) - 1):
+            Robot3D.connect(robotVector[i], robotVector[i + 1])
+            if i + 2 < len(robotVector):
                 Robot3D.connect(robotVector[i], robotVector[i + 2])
-            elif i == (len(robotVector) - 1):
-                Robot3D.connect(robotVector[i], robotVector[i - 2])
-            else:
-                Robot3D.connect(robotVector[i], robotVector[i + 1])
+            if i + 3 < len(robotVector):
+                Robot3D.connect(robotVector[i], robotVector[i + 3])
 
-        for i in range(len(robotVector)):
-            if i == 0:
-                robotVector[i].hashRole[i + 1] = [[self.side], [self.desVelX, self.desVelY, self.desVelZ]]
-                robotVector[i].hashRole[i + 2] = [[self.side * 2], [self.desVelX, self.desVelY, self.desVelZ]]
-            elif i == (len(robotVector) - 1):
-                robotVector[i].hashRole[i - 2] = [[self.side * 2], [self.desVelX, self.desVelY, self.desVelZ]]
-                robotVector[i].hashRole[i - 1] = [[self.side], [self.desVelX, self.desVelY, self.desVelZ]]
-            else:
-                robotVector[i].hashRole[i + 1] = [[self.side], [self.desVelX, self.desVelY, self.desVelZ]]
-                robotVector[i].hashRole[i - 1] = [[self.side], [self.desVelX, self.desVelY, self.desVelZ]]
-                if i == 2:
-                    robotVector[i].hashRole[0] = [[self.side * 2], [self.desVelX, self.desVelY, self.desVelZ]]
-                elif i == len(robotVector)-3:
-                    robotVector[i].hashRole[len(robotVector)-1] = [[self.side * 2], [self.desVelX, self.desVelY, self.desVelZ]]
+        for i in range(len(robotVector) - 1):
+            self.set_hash_role(robotVector, i, i + 1, [[self.side], [self.desVelX, self.desVelY, self.desVelZ]])
+            if i + 2 < len(robotVector):
+                self.set_hash_role(robotVector, i, i + 2, [[self.side * 2], [self.desVelX, self.desVelY, self.desVelZ]])
+            if i + 3 < len(robotVector):
+                self.set_hash_role(robotVector, i, i + 3, [[self.side * 3], [self.desVelX, self.desVelY, self.desVelZ]])
 
     def makeFormationRobot(self):
         return RobotDistanceDoubleIntegrator3D.makeRandomRobot()

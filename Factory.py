@@ -65,18 +65,18 @@ class Factory:
             raise NotImplementedError
 
     @staticmethod
-    def factoryFormation3D(inputString, num_robots, side=0, velX=0, velY=0, free_formation_saves=None, last_free_formation_name=None ):
+    def factoryFormation3D(inputString, num_robots, side=0, velX=0, velY=0, velZ=0,free_formation_saves=None, last_free_formation_name=None ):
         # Displacement
 
         if inputString == SquareFormationDisplacementSingleIntegrator:
             return SquareFormationDisplacementSingleIntegrator3D(side)
         elif inputString == SquareFormationDisplacementDoubleIntegrator:
-            return SquareFormationDisplacementDoubleIntegrator3D(side, desVelX=velX, desVelY=velY)
+            return SquareFormationDisplacementDoubleIntegrator3D(side, desVelX=velX, desVelY=velY, desVelZ=velZ)
 
         elif inputString == LinearHorizontalFormationDisplacementSingleIntegrator:
             return LinearHorizontalFormationDisplacementSingleIntegrator3D(side, num_robots)
         elif inputString == LinearHorizontalFormationDisplacementDoubleIntegrator:
-            return LinearHorizontalFormationDisplacementDoubleIntegrator3D(side, num_robots, desVelX=velX, desVelY=velY)
+            return LinearHorizontalFormationDisplacementDoubleIntegrator3D(side, num_robots, desVelX=velX, desVelY=velY, desVelZ=velZ)
 
         elif inputString == FreeFormationDisplacementSingleIntegrator:
             points = free_formation_saves[last_free_formation_name]["points"]  # free formation parameter
@@ -85,7 +85,7 @@ class Factory:
         elif inputString == FreeFormationDisplacementDoubleIntegrator:
             points = free_formation_saves[last_free_formation_name]["points"]  # free formation parameter
             lines = free_formation_saves[last_free_formation_name]["lines"]  # free formation parameter
-            return FreeFormationDisplacementDoubleIntegrator3D(points, lines, desVelX=velX, desVelY=velY)
+            return FreeFormationDisplacementDoubleIntegrator3D(points, lines, desVelX=velX, desVelY=velY, desVelZ=velZ)
 
         elif inputString == CubeFormationDisplacementSingleIntegrator3D:
             return CubeFormationDisplacementSingleIntegrator3D(side)
@@ -130,12 +130,12 @@ def make_formation_from_robot_and_note(formation_note, robot_type, lato, num_rob
     return formation
 
 
-def make_formation_from_robot_and_note_3D(formation_note, robot_type, lato, num_robots, free_formation_saves=None, last_free_formation_name=None, vel_x=0, vel_y=0):
+def make_formation_from_robot_and_note_3D(formation_note, robot_type, lato, num_robots, free_formation_saves=None, last_free_formation_name=None, vel_x=0, vel_y=0, vel_z=0):
 
     formation_type = make_formation_type(formation_note, robot_type)
     formation = Factory.factoryFormation3D(inputString=formation_type, side=lato, num_robots=num_robots,
                                          free_formation_saves=free_formation_saves,
-                                         last_free_formation_name=last_free_formation_name, velX=vel_x, velY=vel_y)
+                                         last_free_formation_name=last_free_formation_name, velX=vel_x, velY=vel_y, velZ=vel_z)
     return formation
 
 

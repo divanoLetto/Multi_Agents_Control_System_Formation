@@ -4,8 +4,9 @@ import random
 import setting
 import math
 from abc import ABC, abstractmethod
-from sympy import *
 from myGlobalEnviroment3D import *
+
+min_fisic_tollerance_distance = 0.5
 
 
 class Robot3D(ABC):
@@ -181,6 +182,8 @@ class RobotDisplacementDoubleIntegrator3D(RobotDisplacement3D):
         self.deltaVelX = 0
         self.deltaVelY = 0
         self.deltaVelZ = 0
+        self.kp = 2
+        self.kv = 2
 
     def getVelX(self):
         return self.velX
@@ -190,9 +193,9 @@ class RobotDisplacementDoubleIntegrator3D(RobotDisplacement3D):
         return self.velZ
 
     def calculateControlDisplacement(self, stepTime):
-        uX = setting.kp * sum((z.getPosX() - self.getPosX() - self.desiredDistanceX(z)) for z in self.neighbour) + setting.kv * sum((z.getVelX() - self.getVelX() + self.desiredVelocityX(z)) for z in self.neighbour)
-        uY = setting.kp * sum((z.getPosY() - self.getPosY() - self.desiredDistanceY(z)) for z in self.neighbour) + setting.kv * sum((z.getVelY() - self.getVelY() + self.desiredVelocityY(z)) for z in self.neighbour)
-        uZ = setting.kp * sum((z.getPosZ() - self.getPosZ() - self.desiredDistanceZ(z)) for z in self.neighbour) + setting.kv * sum((z.getVelZ() - self.getVelZ() + self.desiredVelocityZ(z)) for z in self.neighbour)
+        uX = self.kp * sum((z.getPosX() - self.getPosX() - self.desiredDistanceX(z)) for z in self.neighbour) + self.kv * sum((z.getVelX() - self.getVelX() + self.desiredVelocityX(z)) for z in self.neighbour)
+        uY = self.kp * sum((z.getPosY() - self.getPosY() - self.desiredDistanceY(z)) for z in self.neighbour) + self.kv * sum((z.getVelY() - self.getVelY() + self.desiredVelocityY(z)) for z in self.neighbour)
+        uZ = self.kp * sum((z.getPosZ() - self.getPosZ() - self.desiredDistanceZ(z)) for z in self.neighbour) + self.kv * sum((z.getVelZ() - self.getVelZ() + self.desiredVelocityZ(z)) for z in self.neighbour)
         self.deltaX = self.velX * stepTime + (uX * (stepTime**2) / 2)
         self.deltaY = self.velY * stepTime + (uY * (stepTime**2) / 2)
         self.deltaZ = self.velZ * stepTime + (uZ * (stepTime**2) / 2)
@@ -204,9 +207,10 @@ class RobotDisplacementDoubleIntegrator3D(RobotDisplacement3D):
             self.deltaVelX = setting.limit_ux_si * sign(self.deltaVelX)
         if abs(self.deltaVelY) > setting.limit_uy_si:
             self.deltaVelY = setting.limit_uy_si * sign(self.deltaVelY)
-        """
+        
         print("The uX control DpDI of the robot with role " + str(self.role) + " is " + str(uX))
         print("The uY control DpDI of the robot with role " + str(self.role) + " is " + str(uY))
+        """
         self.rememberControl = [uX, uY]
 
     def updatePosition(self):
@@ -272,21 +276,29 @@ class RobotDisplacementDoubleIntegrator3D(RobotDisplacement3D):
 
 
 class RobotDistance3D(Robot3D, ABC):
-    def __init__(self, startX, startY, startZ, theta_x=0, theta_y=0, theta_z=0):
+    def __init__(self, startX, startY, startZ, theta_x=random.random() * 2 * math.pi, theta_y=random.random() * 2 * math.pi, theta_z=random.random() * 2 * math.pi):
         super().__init__(0, 0, 0)
         self.startX = startX
         self.startY = startY
         self.startZ = startZ
-        self.theta_x = theta_x  # TODO thoose are not working!!!!!!!!!!!!!!
-        self.theta_y = theta_y
-        self.theta_z = theta_z
+        self.theta_x = 0  # TODO thoose are not working!!!!!!!!!!!!!!
+        self.theta_y = 0
+        self.theta_z = 0
 
         a = self.theta_x  # todo are this...this?
         b = self.theta_y
         c = self.theta_z
-        matrA = [[1, 0, 0], [0, math.cos(a), -math.sin(a)], [0, math.sin(a), math.cos(a)]]
-        matrB = [[math.cos(b), 0, -math.sin(b)], [0, 1, 0], [math.sin(b), 0, math.cos(b)]]
-        matrC = [[math.cos(c), -math.sin(c), 0], [math.sin(c), math.cos(c), 0], [0, 0, 1]]
+
+        matrA = [[1, 0, 0],
+                 [0, math.cos(a), -math.sin(a)],
+                 [0, math.sin(a), math.cos(a)]]
+        matrB = [[math.cos(b), 0, -math.sin(b)],
+                 [0, 1, 0],
+                 [math.sin(b), 0, math.cos(b)]]
+        matrC = [[math.cos(c), -math.sin(c), 0],
+                 [math.sin(c), math.cos(c), 0],
+                 [0, 0, 1]]
+
         self.r_matrix = np.dot(np.dot(matrA, matrB), matrC)
 
     def get_rotation_matrix(self):
@@ -302,10 +314,14 @@ class RobotDistance3D(Robot3D, ABC):
         struct = self.getAbsolutePos()
         return struct[2]
     def getAbsolutePos(self):
-        struct_x_y_z = [[self.posX, self.posY, self.posZ]]
-        struct_new_x_y_z = np.dot(struct_x_y_z, self.r_matrix)
-        abs_pos = np.add(struct_new_x_y_z, [self.startX, self.startY, self.startZ])
-        return abs_pos.tolist()[0]
+        struct_x_y_z = [[self.posX], [self.posY], [self.posZ]]
+        # inv_matrix = np.linalg.inv(self.r_matrix)
+        struct_new_x_y_z = self.r_matrix.dot(struct_x_y_z)
+        abs_pos = np.add(struct_new_x_y_z, [[self.startX], [self.startY], [self.startZ]])
+        list = []
+        for elem in abs_pos:
+             list.append(elem[0])
+        return list
 
     def calculateControl(self, stepTime):
         self.calculateControlDistance(stepTime)
@@ -316,7 +332,7 @@ class RobotDistance3D(Robot3D, ABC):
 
 
 class RobotDistanceSingleIntegrator3D(RobotDistance3D):
-    def __init__(self, startX, startY, startZ, theta_x=0, theta_y=0, theta_z=0,):
+    def __init__(self, startX, startY, startZ, theta_x=random.random() * 2 * math.pi, theta_y=random.random() * 2 * math.pi, theta_z=random.random() * 2 * math.pi):
         super().__init__(startX, startY, startZ, theta_x, theta_y, theta_z)
         self.kp = 1
 
@@ -324,17 +340,18 @@ class RobotDistanceSingleIntegrator3D(RobotDistance3D):
         uX = 0
         uY = 0
         uZ = 0
-        absD = Symbol('absD')
-        desiredDistance = Symbol('desiredDistance')
 
-        dFunction = 8*(absD**2 - desiredDistance**2)/absD - 4*(absD**2 - desiredDistance**2)**2/absD**3
         for n in self.neighbour:
-            dFunctionReal = (lambdify(desiredDistance, dFunction, 'numpy')(self.hashRole[n.role]))
             absDistance = abs(myGlobalEnviroment3D.distanceBetweenRobots(self, n))  # sensore di distanza
-
             versor = myGlobalEnviroment3D.get_vers_robot_base(self, n)
+            if absDistance == 0:
+                print("min_fisic_tollerance_distance in RobotDistanceSingleIntegrator")
+                absDistance = min_fisic_tollerance_distance
 
-            u = self.kp * (lambdify(absD, dFunctionReal, 'numpy')(absDistance))
+            u_0 = self.kp * 4*(absDistance**2 - self.hashRole[n.role]**2)/absDistance - 2*(absDistance**2 - self.hashRole[n.role]**2)**2/absDistance**3
+            u_1 = self.kp * 2 * ((absDistance - self.hashRole[n.role]) * absDistance - (absDistance - self.hashRole[n.role])**2)/(absDistance)
+            u_2 = self.kp * (absDistance - self.hashRole[n.role]) * absDistance
+            u = u_0
             uX += u * versor[0]
             uY += u * versor[1]
             uZ += u * versor[2]
@@ -366,7 +383,7 @@ class RobotDistanceSingleIntegrator3D(RobotDistance3D):
 
 class RobotDistanceDoubleIntegrator3D(RobotDistance3D):
 
-    def __init__(self, startX, startY, startZ, theta_x=0, theta_y=0, theta_z=0, velX=0, velY=0, velZ=0):
+    def __init__(self, startX, startY, startZ, theta_x=random.random() * 2 * math.pi, theta_y=random.random() * 2 * math.pi, theta_z=random.random() * 2 * math.pi, velX=0, velY=0, velZ=0):
         super().__init__(startX, startY, startZ, theta_x, theta_y, theta_z)
         self.velX = velX
         self.velY = velY
@@ -374,7 +391,7 @@ class RobotDistanceDoubleIntegrator3D(RobotDistance3D):
         self.deltaVelX = 0
         self.deltaVelY = 0
         self.deltaVelZ = 0
-        self.kp = 8
+        self.kp = 1
         self.kv = 10
 
     def getVelX(self):
@@ -402,17 +419,16 @@ class RobotDistanceDoubleIntegrator3D(RobotDistance3D):
         uX = 0
         uY = 0
         uZ = 0
-        absD = Symbol('absD')
-        desiredDistance = Symbol('desiredDistance')
-
-        dFunction = (4 * (absD ** 2 - desiredDistance ** 2) / absD) - (2 * (absD ** 2 - desiredDistance ** 2) ** 2 / absD ** 3)
         for n in self.neighbour:
-            dFunctionReal = (lambdify(desiredDistance, dFunction, 'numpy')(self.desideredDistance(n)))
             absDistance = abs(myGlobalEnviroment3D.distanceBetweenRobots(self, n))  # sensore di distanza
-
             versor = myGlobalEnviroment3D.get_vers_robot_base(self, n)
+            if absDistance == 0:
+                print("min_fisic_tollerance_distance in RobotDistanceSingleIntegrator")
+                absDistance = min_fisic_tollerance_distance
 
-            u = self.kp * (lambdify(absD, dFunctionReal, 'numpy')(absDistance))
+            u_0 = (4 * (absDistance ** 2 - self.desideredDistance(n) ** 2) / absDistance) - (2 * (absDistance ** 2 - self.desideredDistance(n) ** 2) ** 2 / absDistance ** 3)
+            u_2 = self.kp * (absDistance - self.desideredDistance(n)) * absDistance
+            u = u_2
             uX += u * versor[0]
             uY += u * versor[1]
             uZ += u * versor[2]
@@ -420,11 +436,11 @@ class RobotDistanceDoubleIntegrator3D(RobotDistance3D):
         uX -= self.Dx()
         uY -= self.Dy()
         uZ -= self.Dz()
-
+        """
         print("The uX control of the DtDI robot with role " + str(self.role) + " is " + str(uX))
         print("The uY control of the DtDI robot with role " + str(self.role) + " is " + str(uY))
         print("The uZ control of the DtDI robot with role " + str(self.role) + " is " + str(uZ))
-
+        """
         self.deltaX = self.velX * stepTime + (uX * (stepTime ** 2) / 2)
         self.deltaY = self.velY * stepTime + (uY * (stepTime ** 2) / 2)
         self.deltaZ = self.velZ * stepTime + (uZ * (stepTime ** 2) / 2)

@@ -22,9 +22,12 @@ class Simulation:
         # parametri per il settaggio della velocità desiderata nel double integrator displacement
         self.desidered_vel_x = 0
         self.desidered_vel_y = 0
+        self.desidered_vel_z = 0
         self.desidered_velocity_changed = False
 
         self.show_formation_lines = True
+        self.show_trajectory_lines = True
+        self.show_poins_line = True
 
         self.three_d_plot = False
 
@@ -69,6 +72,10 @@ class Simulation:
         return self.desidered_vel_y
     def set_des_vel_y(self, vel_y):
         self.desidered_vel_y = vel_y
+    def get_des_vel_z(self):
+        return self.desidered_vel_z
+    def set_des_vel_z(self, vel_z):
+        self.desidered_vel_z = vel_z
 
     def update_time(self):
         x = self.current_time + self.step_time

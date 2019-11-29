@@ -5,9 +5,9 @@ import setting
 import math
 from myGlobalEnviroment import *
 from abc import ABC, abstractmethod
-from sympy import *  # todo maybe better library?
 
 min_fisic_tollerance_distance = 0.5
+
 
 class Robot(ABC):
     def __init__(self, posX, posY):
@@ -286,7 +286,7 @@ class RobotDisplacementUnicycle(RobotDisplacement):
 
 # DISTANCE CONTROLED ROBOT
 class RobotDistance(Robot, ABC):
-    def __init__(self, startX, startY, theta=0):
+    def __init__(self, startX, startY, theta=random.random() * 2 * math.pi):
         super().__init__(0, 0)
         self.startX = startX
         self.startY = startY
@@ -306,7 +306,7 @@ class RobotDistance(Robot, ABC):
 
 
 class RobotDistanceSingleIntegrator(RobotDistance):
-    def __init__(self, startX, startY, theta=0):
+    def __init__(self, startX, startY, theta=random.random() * 2 * math.pi):
         super().__init__(startX, startY, theta)
         self.kp = 1
 
@@ -323,20 +323,15 @@ class RobotDistanceSingleIntegrator(RobotDistance):
     def calculateControlDistance(self, stepTime):
         uX = 0
         uY = 0
-        absD = Symbol('absD')
-        desiredDistance = Symbol('desiredDistance')
 
-        dFunction = 8*(absD**2 - desiredDistance**2)/absD - 4*(absD**2 - desiredDistance**2)**2/absD**3
         for n in self.neighbour:
-            dFunctionReal = (lambdify(desiredDistance, dFunction, 'numpy')(self.hashRole[n.role]))
             absDistance = abs(myGlobalEnviroment.distanceBetweenRobots(self, n))  # sensore di distanza
             if absDistance == 0:
                 print("min_fisic_tollerance_distance in RobotDistanceSingleIntegrator")
                 absDistance = min_fisic_tollerance_distance
 
             cos_sin_theta = myGlobalEnviroment.get_relative_cos_sin_theta_between_robots(self, n)
-
-            u = self.kp * (lambdify(absD, dFunctionReal, 'numpy')(absDistance))
+            u = self.kp * 4*(absDistance**2 - self.hashRole[n.role]**2)/absDistance - 2*(absDistance**2 - self.hashRole[n.role]**2)**2/absDistance**3
             uX += u * cos_sin_theta[0]
             uY += u * cos_sin_theta[1]
         """
@@ -345,7 +340,6 @@ class RobotDistanceSingleIntegrator(RobotDistance):
         """
         self.deltaX = uX * stepTime
         self.deltaY = uY * stepTime
-        self.rememberControl = [uX, uY]
 
     @staticmethod
     def getName():
@@ -354,7 +348,7 @@ class RobotDistanceSingleIntegrator(RobotDistance):
 
 class RobotDistanceDoubleIntegrator(RobotDistance):
 
-    def __init__(self, startX, startY, theta=0, velX=0, velY=0):
+    def __init__(self, startX, startY, theta=random.random() * 2 * math.pi, velX=0, velY=0):
         super().__init__(startX, startY, theta)
         self.velX = velX
         self.velY = velY
@@ -381,12 +375,8 @@ class RobotDistanceDoubleIntegrator(RobotDistance):
     def calculateControlDistance(self, stepTime):
         uX = 0
         uY = 0
-        absD = Symbol('absD')
-        desiredDistance = Symbol('desiredDistance')
 
-        dFunction = (4 * (absD ** 2 - desiredDistance ** 2) / absD) - (2 * (absD ** 2 - desiredDistance ** 2) ** 2 / absD ** 3)
         for n in self.neighbour:
-            dFunctionReal = (lambdify(desiredDistance, dFunction, 'numpy')(self.desideredDistance(n)))
             absDistance = abs(myGlobalEnviroment.distanceBetweenRobots(self, n))  # sensore di distanza
             if absDistance == 0:
                 print("min_fisic_tollerance_distance in RobotDistanceDoubleIntegrator")
@@ -394,7 +384,7 @@ class RobotDistanceDoubleIntegrator(RobotDistance):
 
             cos_sin_theta = myGlobalEnviroment.get_relative_cos_sin_theta_between_robots(self, n)
 
-            u = self.kp * (lambdify(absD, dFunctionReal, 'numpy')(absDistance))
+            u = (4 * (absDistance ** 2 - self.desideredDistance(n) ** 2) / absDistance) - (2 * (absDistance ** 2 - self.desideredDistance(n) ** 2) ** 2 / absDistance ** 3)
             uX += u * cos_sin_theta[0]
             uY += u * cos_sin_theta[1]
 
@@ -455,12 +445,8 @@ class RobotDistanceUnicycle(RobotDistance):
     def calculateControlDistance(self, stepTime):
         linearux = 0
         linearuy = 0
-        absD = Symbol('absD')
-        desiredDistance = Symbol('desiredDistance')
 
-        dFunction = (4*(absD**2 - desiredDistance**2)/absD) - (2*(absD**2 - desiredDistance**2)**2/absD**3)
         for n in self.neighbour:
-            dFunctionReal = (lambdify(desiredDistance, dFunction, 'numpy')(self.hashRole[n.role]))
             absDistance = abs(myGlobalEnviroment.distanceBetweenRobots(self, n))  # sensore di distanza
             if absDistance == 0:
                 print("min_fisic_tollerance_distance in RobotDistanceUnycicle")
@@ -468,7 +454,7 @@ class RobotDistanceUnicycle(RobotDistance):
 
             cos_sin_theta = myGlobalEnviroment.get_relative_cos_sin_theta_between_robots(self, n)
 
-            u = self.kp = 2 * (lambdify(absD, dFunctionReal, 'numpy')(absDistance))
+            u = self.kp * (4*(absDistance**2 - self.hashRole[n.role]**2)/absDistance) - (2*(absDistance**2 - self.hashRole[n.role]**2)**2/absDistance**3)
             linearux += u * cos_sin_theta[0]
             linearuy += u * cos_sin_theta[1]
 
@@ -476,11 +462,10 @@ class RobotDistanceUnicycle(RobotDistance):
         v = math.cos(-self.alpha) * linearux - math.sin(-self.alpha) * linearuy
         w = (math.sin(-self.alpha) * linearux + math.cos(-self.alpha) * linearuy) / l
 
-        self.deltaX = v * stepTime * cos(self.alpha)
-        self.deltaY = v * stepTime * sin(self.alpha)
+        self.deltaX = v * stepTime * math.cos(self.alpha)
+        self.deltaY = v * stepTime * math.sin(self.alpha)
 
         self.deltaAlpha = w * stepTime
-        self.rememberControl = [v, w]
         """
         print("The v control of the DtU robot with role " + str(self.role) + " is " + str(v))
         print("The w control of the DtU robot with role " + str(self.role) + " is " + str(w))
