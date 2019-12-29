@@ -1,10 +1,8 @@
 from numpy import iinfo
 from abc import ABC, abstractmethod
-import setting
 from munkres import Munkres, print_matrix
 import numpy
 from Robot3D import *
-from myGlobalEnviroment3D import *
 from utils3D import *
 
 
@@ -49,7 +47,8 @@ class Formation3D(ABC):
                     robots.append(rob_struct[1])
                     i += 1
 
-    def specifyFormationRobot(self, posX, posY, posZ):
+    @staticmethod
+    def specifyFormationRobot(posX, posY, posZ):
         pass
 
     def uncompatibility_number_robots(self, num_robots):
@@ -165,7 +164,8 @@ class SquareFormationDisplacementSingleIntegrator3D(SquareFormationDisplacement3
     def makeFormationRobot(self):
         return RobotDisplacementSingleIntegrator3D.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY, posZ):
+    @staticmethod
+    def specifyFormationRobot(posX, posY, posZ):
         return RobotDisplacementSingleIntegrator3D(posX, posY, posZ)
 
 
@@ -198,7 +198,8 @@ class SquareFormationDisplacementDoubleIntegrator3D(SquareFormationDisplacement3
     def makeFormationRobot(self):
         return RobotDisplacementDoubleIntegrator3D.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY, posZ):
+    @staticmethod
+    def specifyFormationRobot(posX, posY, posZ):
         return RobotDisplacementDoubleIntegrator3D(posX, posY, posZ)
 
 
@@ -256,7 +257,8 @@ class LinearHorizontalFormationDisplacementSingleIntegrator3D(LinearFormationDis
     def makeFormationRobot(self):
         return RobotDisplacementSingleIntegrator3D.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY, posZ):
+    @staticmethod
+    def specifyFormationRobot(posX, posY, posZ):
         return RobotDisplacementSingleIntegrator3D(posX, posY, posZ)
 
 
@@ -287,7 +289,8 @@ class LinearHorizontalFormationDisplacementDoubleIntegrator3D(LinearFormationDis
     def makeFormationRobot(self):
         return RobotDisplacementDoubleIntegrator3D.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY, posZ):
+    @staticmethod
+    def specifyFormationRobot(posX, posY, posZ):
         return RobotDisplacementDoubleIntegrator3D(posX, posY, posZ)
 
 
@@ -368,7 +371,8 @@ class CubeFormationDisplacementSingleIntegrator3D(CubeFormationDisplacement3D):
     def makeFormationRobot(self):
         return RobotDisplacementSingleIntegrator3D.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY, posZ):
+    @staticmethod
+    def specifyFormationRobot(posX, posY, posZ):
         return RobotDisplacementSingleIntegrator3D(posX, posY, posZ)
 
 
@@ -417,7 +421,8 @@ class CubeFormationDisplacementDoubleIntegrator3D(CubeFormationDisplacement3D):
     def makeFormationRobot(self):
         return RobotDisplacementDoubleIntegrator3D.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY, posZ):
+    @staticmethod
+    def specifyFormationRobot(posX, posY, posZ):
         return RobotDisplacementDoubleIntegrator3D(posX, posY, posZ)
 
 
@@ -505,7 +510,8 @@ class FreeFormationDisplacementSingleIntegrator3D(FreeFormationDisplacement3D):
     def makeFormationRobot(self):
         return RobotDisplacementSingleIntegrator3D.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY, posZ):
+    @staticmethod
+    def specifyFormationRobot(posX, posY, posZ):
         return RobotDisplacementSingleIntegrator3D(posX, posY, posZ)
 
 
@@ -545,7 +551,8 @@ class FreeFormationDisplacementDoubleIntegrator3D(FreeFormationDisplacement3D):
     def makeFormationRobot(self):
         return RobotDisplacementDoubleIntegrator3D.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY, posZ):
+    @staticmethod
+    def specifyFormationRobot(posX, posY, posZ):
         return RobotDisplacementDoubleIntegrator3D(posX, posY, posZ)
 
 
@@ -671,7 +678,8 @@ class SquareFormationDistanceSingleIntegrator3D(SquareFormationDistance3D):
     def makeFormationRobot(self):
         return RobotDistanceSingleIntegrator3D.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY, posZ):
+    @staticmethod
+    def specifyFormationRobot(posX, posY, posZ):
         return RobotDistanceSingleIntegrator3D(posX, posY, posZ)
 
 
@@ -714,7 +722,8 @@ class SquareFormationDistanceDoubleIntegrator3D(SquareFormationDistance3D):
     def makeFormationRobot(self):
         return RobotDistanceDoubleIntegrator3D.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY, posZ):
+    @staticmethod
+    def specifyFormationRobot( posX, posY, posZ):
         return RobotDistanceDoubleIntegrator3D(posX, posY, posZ)
 
 
@@ -765,7 +774,8 @@ class LinearHorizontalFormationDistanceSingleIntegrator3D(LinearFormationDistanc
     def makeFormationRobot(self):
         return RobotDistanceSingleIntegrator3D.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY, posZ):
+    @staticmethod
+    def specifyFormationRobot(posX, posY, posZ):
         return RobotDistanceSingleIntegrator3D(posX, posY, posZ)
 
 
@@ -798,7 +808,8 @@ class LinearHorizontalFormationDistanceDoubleIntegrator3D(LinearFormationDistanc
     def makeFormationRobot(self):
         return RobotDistanceDoubleIntegrator3D.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY, posZ):
+    @staticmethod
+    def specifyFormationRobot(posX, posY, posZ):
         return RobotDistanceDoubleIntegrator3D(posX, posY, posZ)
 
 
@@ -919,7 +930,8 @@ class CubeFormationDistanceSingleIntegrator3D(CubeFormationDistance3D):
     def makeFormationRobot(self):
         return RobotDistanceSingleIntegrator3D.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY, posZ):
+    @staticmethod
+    def specifyFormationRobot( posX, posY, posZ):
         return RobotDistanceSingleIntegrator3D(posX, posY, posZ)
 
 
@@ -1017,7 +1029,8 @@ class CubeFormationDistanceDoubleIntegrator3D(CubeFormationDistance3D):
     def makeFormationRobot(self):
         return RobotDistanceDoubleIntegrator3D.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY, posZ):
+    @staticmethod
+    def specifyFormationRobot(posX, posY, posZ):
         return RobotDistanceDoubleIntegrator3D(posX, posY, posZ)
 
 
@@ -1095,7 +1108,8 @@ class FreeFormationDistanceSingleIntegrator3D(FreeFormationDistance3D):
     def makeFormationRobot(self):
         return RobotDistanceSingleIntegrator3D.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY, posZ):
+    @staticmethod
+    def specifyFormationRobot(posX, posY, posZ):
         return RobotDistanceSingleIntegrator3D(posX, posY, posZ)
 
 
@@ -1132,6 +1146,7 @@ class FreeFormationDistanceDoubleIntegrator3D(FreeFormationDistance3D):
     def makeFormationRobot(self):
         return RobotDistanceDoubleIntegrator3D.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY, posZ):
+    @staticmethod
+    def specifyFormationRobot(posX, posY, posZ):
         return RobotDistanceDoubleIntegrator3D(posX, posY, posZ)
 

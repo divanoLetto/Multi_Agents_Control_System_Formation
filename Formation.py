@@ -2,8 +2,6 @@ from numpy import iinfo
 from myGlobalEnviroment import *
 from abc import ABC, abstractmethod
 from Robot import *
-from Robot import RobotDisplacementSingleIntegrator
-import setting
 from utils import *
 from munkres import Munkres, print_matrix
 import numpy
@@ -50,7 +48,8 @@ class Formation(ABC):
                     robots.append(rob_struct[1])
                     i += 1
 
-    def specifyFormationRobot(self, posX,posY):
+    @staticmethod
+    def specifyFormationRobot(posX, posY):
         pass
 
     def uncompatibility_number_robots(self, num_robots):
@@ -163,7 +162,8 @@ class SquareFormationDisplacementSingleIntegrator(SquareFormationDisplacement):
     def makeFormationRobot(self):
         return RobotDisplacementSingleIntegrator.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY):
+    @staticmethod
+    def specifyFormationRobot(posX, posY):
         return RobotDisplacementSingleIntegrator(posX, posY)
 
 
@@ -195,7 +195,8 @@ class SquareFormationDisplacementDoubleIntegrator(SquareFormationDisplacement):
     def makeFormationRobot(self):
         return RobotDisplacementDoubleIntegrator.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY):
+    @staticmethod
+    def specifyFormationRobot( posX, posY):
         return RobotDisplacementDoubleIntegrator(posX, posY)
 
 
@@ -204,7 +205,8 @@ class SquareFormationDisplacementUnicycle(SquareFormationDisplacementSingleInteg
     def makeFormationRobot(self):
         return RobotDisplacementUnicycle.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY):
+    @staticmethod
+    def specifyFormationRobot(posX, posY):
         return RobotDisplacementUnicycle(posX, posY)
 
 
@@ -262,7 +264,8 @@ class LinearHorizontalFormationDisplacementSingleIntegrator(LinearFormationDispl
     def makeFormationRobot(self):
         return RobotDisplacementSingleIntegrator.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY):
+    @staticmethod
+    def specifyFormationRobot( posX, posY):
         return RobotDisplacementSingleIntegrator(posX, posY)
 
 
@@ -292,7 +295,8 @@ class LinearHorizontalFormationDisplacementDoubleIntegrator(LinearFormationDispl
     def makeFormationRobot(self):
         return RobotDisplacementDoubleIntegrator.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY):
+    @staticmethod
+    def specifyFormationRobot(posX, posY):
         return RobotDisplacementDoubleIntegrator(posX, posY)
 
 
@@ -301,7 +305,8 @@ class LinearHorizontalFormationDisplacementUnicycle(LinearHorizontalFormationDis
     def makeFormationRobot(self):
         return RobotDisplacementUnicycle.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY):
+    @staticmethod
+    def specifyFormationRobot(posX, posY):
         return RobotDisplacementUnicycle(posX, posY)
 
 
@@ -376,7 +381,8 @@ class FreeFormationDisplacementSingleIntegrator(FreeFormationDisplacement):
     def makeFormationRobot(self):
         return RobotDisplacementSingleIntegrator.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY):
+    @staticmethod
+    def specifyFormationRobot( posX, posY):
         return RobotDisplacementSingleIntegrator(posX, posY)
 
 
@@ -414,7 +420,8 @@ class FreeFormationDisplacementDoubleIntegrator(FreeFormationDisplacement):
     def makeFormationRobot(self):
         return RobotDisplacementDoubleIntegrator.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY):
+    @staticmethod
+    def specifyFormationRobot(posX, posY):
         return RobotDisplacementDoubleIntegrator(posX, posY)
 
 
@@ -423,7 +430,8 @@ class FreeFormationDisplacementUnicycle(FreeFormationDisplacementSingleIntegrato
     def makeFormationRobot(self):
         return RobotDisplacementUnicycle.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY):
+    @staticmethod
+    def specifyFormationRobot(posX, posY):
         return RobotDisplacementUnicycle(posX, posY)
 
 
@@ -546,7 +554,8 @@ class SquareFormationDistanceSingleIntegrator(SquareFormationDistance):
     def makeFormationRobot(self):
         return RobotDistanceSingleIntegrator.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY):
+    @staticmethod
+    def specifyFormationRobot(posX, posY):
         return RobotDistanceSingleIntegrator(posX, posY)
 
 
@@ -588,7 +597,8 @@ class SquareFormationDistanceDoubleIntegrator(SquareFormationDistance):
     def makeFormationRobot(self):
         return RobotDistanceDoubleIntegrator.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY):
+    @staticmethod
+    def specifyFormationRobot(posX, posY):
         return RobotDistanceDoubleIntegrator(posX, posY)
 
 
@@ -596,7 +606,8 @@ class SquareFormationDistanceUnicycle(SquareFormationDistanceSingleIntegrator):
     def makeFormationRobot(self):
         return RobotDistanceUnicycle.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY):
+    @staticmethod
+    def specifyFormationRobot(posX, posY):
         return RobotDistanceUnicycle(posX, posY)
 
 
@@ -647,7 +658,8 @@ class LinearHorizontalFormationDistanceSingleIntegrator(LinearFormationDistance)
     def makeFormationRobot(self):
         return RobotDistanceSingleIntegrator.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY):
+    @staticmethod
+    def specifyFormationRobot(posX, posY):
         return RobotDistanceSingleIntegrator(posX, posY)
 
 
@@ -679,7 +691,8 @@ class LinearHorizontalFormationDistanceDoubleIntegrator(LinearFormationDistance)
     def makeFormationRobot(self):
         return RobotDistanceDoubleIntegrator.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY):
+    @staticmethod
+    def specifyFormationRobot(posX, posY):
         return RobotDistanceDoubleIntegrator(posX, posY)
 
 
@@ -688,7 +701,8 @@ class LinearHorizontalFormationDistanceUnicycle(LinearHorizontalFormationDistanc
     def makeFormationRobot(self):
         return RobotDistanceUnicycle.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY):
+    @staticmethod
+    def specifyFormationRobot(posX, posY):
         return RobotDistanceUnicycle(posX, posY)
 
 
@@ -755,7 +769,8 @@ class FreeFormationDistanceSingleIntegrator(FreeFormationDistance):
     def makeFormationRobot(self):
         return RobotDistanceSingleIntegrator.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY):
+    @staticmethod
+    def specifyFormationRobot(posX, posY):
         return RobotDistanceSingleIntegrator(posX, posY)
 
 
@@ -791,7 +806,8 @@ class FreeFormationDistanceDoubleIntegrator(FreeFormationDistance):
     def makeFormationRobot(self):
         return RobotDistanceDoubleIntegrator.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY):
+    @staticmethod
+    def specifyFormationRobot(posX, posY):
         return RobotDistanceDoubleIntegrator(posX, posY)
 
 
@@ -800,5 +816,6 @@ class FreeFormationDistanceUnicycle(FreeFormationDistanceSingleIntegrator):
     def makeFormationRobot(self):
         return RobotDistanceUnicycle.makeRandomRobot()
 
-    def specifyFormationRobot(self, posX, posY):
+    @staticmethod
+    def specifyFormationRobot( posX, posY):
         return RobotDistanceUnicycle(posX, posY)

@@ -1,6 +1,3 @@
-import matplotlib.pyplot as plt
-import time
-
 
 class PositionTable3D:
     def __init__(self, robotVectors, canvas, ax):

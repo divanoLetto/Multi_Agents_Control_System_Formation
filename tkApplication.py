@@ -575,10 +575,12 @@ class Application(tk.Frame):
 
         print("calcolating...")
         while self.simulation.get_time() < self.simulation.get_max_time() and self.simulation.stop_execution is False:
+
             self.simulation.update_time()
             self.var_time.set(self.simulation.current_time)
             positions_table.plotRobotsLive(robots_vector, self.simulation.show_formation_lines, self.simulation.show_trajectory_lines, self.simulation.show_poins_line)
             updateRobots(robots_vector, self.simulation.get_step_time())
+
             if self.simulation.formation_changed:
                 print("formation changed, calcolating new formation in start function")
                 self.simulation.formation_changed = False

@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import random
-import setting
 import math
 from myGlobalEnviroment import *
 from abc import ABC, abstractmethod
@@ -19,7 +18,8 @@ class Robot(ABC):
         self.role = None
         self.hashRole = {}
         self.formation = None
-        self.rememberControl = None
+        self.kp = 1
+        self.error = None
 
     def __str__(self):
         string = "Robot with role " + str(self.role)  # + " in position " + str(self.getAbsolutePosX()) + "," +str(self.getAbsolutePosY())
@@ -29,9 +29,10 @@ class Robot(ABC):
         return self.posX
     def getPosY(self):
         return self.posY
-
     def getAbsolutePos(self):
         return [self.getAbsolutePosX(), self.getAbsolutePosY()]
+    def get_error(self):
+        return self.error
 
     def disconnect(self):
         self.neighbour = []
@@ -147,7 +148,8 @@ class RobotDisplacementSingleIntegrator(RobotDisplacement):
         """
         self.deltaX = uX * stepTime
         self.deltaY = uY * stepTime
-        self.rememberControl = [uX, uY]
+
+        self.error = math.sqrt(sum(np.linalg.norm([z.getPosX() - self.getPosX() - self.desiredDistanceX(z), z.getPosY() - self.getPosY() - self.desiredDistanceY(z)])**2 for z in self.neighbour))
 
     @staticmethod
     def makeRandomRobot():
@@ -169,6 +171,8 @@ class RobotDisplacementDoubleIntegrator(RobotDisplacement):
         self.velY = velY
         self.deltaVelX = 0
         self.deltaVelY = 0
+        self.kp = 2
+        self.kv = 2
 
     def getVelX(self):
         return self.velX
@@ -176,12 +180,14 @@ class RobotDisplacementDoubleIntegrator(RobotDisplacement):
         return self.velY
 
     def calculateControlDisplacement(self, stepTime):
-        uX = setting.kp * sum((z.getPosX() - self.getPosX() - self.desiredDistanceX(z)) for z in self.neighbour) + setting.kv * sum((z.getVelX() - self.getVelX() + self.desiredVelocityX(z)) for z in self.neighbour)
-        uY = setting.kp * sum((z.getPosY() - self.getPosY() - self.desiredDistanceY(z)) for z in self.neighbour) + setting.kv * sum((z.getVelY() - self.getVelY() + self.desiredVelocityY(z)) for z in self.neighbour)
+        uX = self.kp * sum((z.getPosX() - self.getPosX() - self.desiredDistanceX(z)) for z in self.neighbour) + self.kv * sum((z.getVelX() - self.getVelX() + self.desiredVelocityX(z)) for z in self.neighbour)
+        uY = self.kp * sum((z.getPosY() - self.getPosY() - self.desiredDistanceY(z)) for z in self.neighbour) + self.kv * sum((z.getVelY() - self.getVelY() + self.desiredVelocityY(z)) for z in self.neighbour)
         self.deltaX = self.velX * stepTime + (uX * (stepTime**2) / 2)
         self.deltaY = self.velY * stepTime + (uY * (stepTime**2) / 2)
         self.deltaVelX = uX * stepTime
         self.deltaVelY = uY * stepTime
+
+        self.error = math.sqrt(sum(np.linalg.norm([z.getPosX() - self.getPosX() - self.desiredDistanceX(z), z.getPosY() - self.getPosY() - self.desiredDistanceY(z)])**2 for z in self.neighbour))
         """
         if abs(self.deltaVelX) > setting.limit_ux_si:
             self.deltaVelX = setting.limit_ux_si * sign(self.deltaVelX)
@@ -191,7 +197,6 @@ class RobotDisplacementDoubleIntegrator(RobotDisplacement):
         print("The uX control DpDI of the robot with role " + str(self.role) + " is " + str(uX))
         print("The uY control DpDI of the robot with role " + str(self.role) + " is " + str(uY))
         """
-        self.rememberControl = [uX, uY]
 
     def updatePosition(self):
         self.posX = self.getPosX() + self.deltaX
@@ -260,7 +265,8 @@ class RobotDisplacementUnicycle(RobotDisplacement):
         self.deltaY = v * stepTime * math.sin(self.alpha)
 
         self.deltaAlpha = w * stepTime
-        self.rememberControl = [v, w]
+
+        self.error = math.sqrt(sum(np.linalg.norm([z.getPosX() - self.getPosX() - self.desiredDistanceX(z), z.getPosY() - self.getPosY() - self.desiredDistanceY(z)])**2 for z in self.neighbour))
         """
         print("The v control of the DpU robot with role " + str(self.role) + " is " + str(v))
         print("The w control of the DpU robot with role " + str(self.role) + " is " + str(w))
@@ -341,6 +347,11 @@ class RobotDistanceSingleIntegrator(RobotDistance):
         self.deltaX = uX * stepTime
         self.deltaY = uY * stepTime
 
+        self.error = 0
+        for n in self.neighbour:
+            self.error += (abs(abs(myGlobalEnviroment.distanceBetweenRobots(self, n))-self.hashRole[n.role]))**2
+        self.error = math.sqrt(self.error)
+
     @staticmethod
     def getName():
         return "Robot distance single integrator"
@@ -398,6 +409,11 @@ class RobotDistanceDoubleIntegrator(RobotDistance):
         self.deltaY = self.velY * stepTime + (uY * (stepTime ** 2) / 2)
         self.deltaVelX = uX * stepTime
         self.deltaVelY = uY * stepTime
+
+        self.error = 0
+        for n in self.neighbour:
+            self.error += abs(abs(myGlobalEnviroment.distanceBetweenRobots(self, n)) - self.desideredDistance(n)) ** 2
+        self.error = math.sqrt(self.error)
 
     def Dx(self):
         return self.kv * self.getVelX()
@@ -466,6 +482,11 @@ class RobotDistanceUnicycle(RobotDistance):
         self.deltaY = v * stepTime * math.sin(self.alpha)
 
         self.deltaAlpha = w * stepTime
+
+        self.error = 0
+        for n in self.neighbour:
+            self.error += abs(abs(myGlobalEnviroment.distanceBetweenRobots(self, n)) - self.hashRole[n.role]) ** 2
+        self.error = math.sqrt(self.error)
         """
         print("The v control of the DtU robot with role " + str(self.role) + " is " + str(v))
         print("The w control of the DtU robot with role " + str(self.role) + " is " + str(w))

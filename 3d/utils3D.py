@@ -1,4 +1,3 @@
-from Formation3D import *
 import time
 import setting
 import matplotlib.pyplot as plt

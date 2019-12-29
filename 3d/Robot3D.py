@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import random
-import setting
 import math
 from abc import ABC, abstractmethod
 from myGlobalEnviroment3D import *
@@ -21,6 +20,7 @@ class Robot3D(ABC):
         self.role = None
         self.hashRole = {}
         self.formation = None
+        self.error = None
 
     def __str__(self):
         string = "Robot with role " + str(self.role) # + " in position " + str(self.getAbsolutePosX()) + "," +str(self.getAbsolutePosY() + "," +str(self.getAbsolutePosZ()))
@@ -32,6 +32,8 @@ class Robot3D(ABC):
         return self.posY
     def getPosZ(self):
         return self.posZ
+    def get_error(self):
+        return self.error
 
     def disconnect(self):
         self.neighbour = []
@@ -159,6 +161,9 @@ class RobotDisplacementSingleIntegrator3D(RobotDisplacement3D):
         self.deltaY = uY * stepTime
         self.deltaZ = uZ * stepTime
 
+        self.error = math.sqrt(sum(np.linalg.norm([z.getPosX() - self.getPosX() - self.desiredDistanceX(z), z.getPosY() - self.getPosY() - self.desiredDistanceY(z), z.getPosZ() - self.getPosZ() - self.desiredDistanceZ(z)])**2 for z in self.neighbour))
+
+
     @staticmethod
     def makeRandomRobot():
         posXr = random.randint(0, 50)
@@ -211,7 +216,7 @@ class RobotDisplacementDoubleIntegrator3D(RobotDisplacement3D):
         print("The uX control DpDI of the robot with role " + str(self.role) + " is " + str(uX))
         print("The uY control DpDI of the robot with role " + str(self.role) + " is " + str(uY))
         """
-        self.rememberControl = [uX, uY]
+        self.error = math.sqrt(sum(np.linalg.norm([z.getPosX() - self.getPosX() - self.desiredDistanceX(z), z.getPosY() - self.getPosY() - self.desiredDistanceY(z), z.getPosZ() - self.getPosZ() - self.desiredDistanceZ(z)])**2 for z in self.neighbour))
 
     def updatePosition(self):
         self.posX = self.getPosX() + self.deltaX
@@ -281,11 +286,11 @@ class RobotDistance3D(Robot3D, ABC):
         self.startX = startX
         self.startY = startY
         self.startZ = startZ
-        self.theta_x = 0  # TODO thoose are not working!!!!!!!!!!!!!!
+        self.theta_x = 0
         self.theta_y = 0
         self.theta_z = 0
 
-        a = self.theta_x  # todo are this...this?
+        a = self.theta_x
         b = self.theta_y
         c = self.theta_z
 
@@ -363,6 +368,11 @@ class RobotDistanceSingleIntegrator3D(RobotDistance3D):
         self.deltaX = uX * stepTime
         self.deltaY = uY * stepTime
         self.deltaZ = uZ * stepTime
+
+        self.error = 0
+        for n in self.neighbour:
+            self.error += abs(abs(myGlobalEnviroment3D.distanceBetweenRobots(self, n)) - self.hashRole[n.role]) ** 2
+        self.error = math.sqrt(self.error)
 
     @staticmethod
     def makeRandomRobot():
@@ -447,6 +457,11 @@ class RobotDistanceDoubleIntegrator3D(RobotDistance3D):
         self.deltaVelX = uX * stepTime
         self.deltaVelY = uY * stepTime
         self.deltaVelZ = uZ * stepTime
+
+        self.error = 0
+        for n in self.neighbour:
+            self.error += abs(abs(myGlobalEnviroment3D.distanceBetweenRobots(self, n)) - self.desideredDistance(n)) ** 2
+        self.error = math.sqrt(self.error)
 
     def Dx(self):
         return self.kv * self.getVelX()

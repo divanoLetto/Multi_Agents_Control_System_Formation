@@ -1,11 +1,6 @@
-from Formation import *
-from FormationNote import *
-import time
 import setting
-import matplotlib.pyplot as plt
 import math
 import random
-
 
 def findCommander(robotVector):
     for robot in robotVector:
