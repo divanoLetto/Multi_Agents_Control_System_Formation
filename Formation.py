@@ -61,7 +61,7 @@ class Formation(ABC):
 
 class FormationDisplacement(Formation, ABC):
 
-    def make_munkres(self, robotVector):  
+    def make_munkres(self, robotVector):
         matrix = self.calc_matrix_cost(robotVector)
         m = Munkres()
         indexes = m.compute(matrix)
