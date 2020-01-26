@@ -61,7 +61,7 @@ class Formation(ABC):
 
 class FormationDisplacement(Formation, ABC):
 
-    def make_munkres(self, robotVector):
+    def make_munkres(self, robotVector):  
         matrix = self.calc_matrix_cost(robotVector)
         m = Munkres()
         indexes = m.compute(matrix)
@@ -471,7 +471,7 @@ class FormationDistance(Formation, ABC):
             if total < min:
                 min = total
                 best_idexes = indexes
-        print("the best matrix was the number: " + str(i))
+        #print("the best matrix was the number: " + str(i))
         self.reset_roles_connections(robotVector, best_idexes)
 
     def calcolate_baricenter(self, robotVector):

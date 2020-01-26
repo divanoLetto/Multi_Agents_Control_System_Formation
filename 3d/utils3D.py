@@ -66,19 +66,64 @@ def rotate_point(rotate_center, point, alpha):
     return [new_x, new_y, new_z]
 
 
-def get_matrices_from_points(robotVector, points, baricenter):
-        matrixs = []
-        alpha = 0
-        for i in range(7):
-            matrix = []
-            for robot in robotVector:
-                robot_roles_assigment = []
-                for point in points:
-                    rotate_p = rotate_point(baricenter, point, alpha)
-                    robot_role = distance_between_point(robot.getAbsolutePos(), rotate_p)
-                    robot_roles_assigment.append(robot_role)
-                matrix.append(robot_roles_assigment)
-            matrixs.append(matrix)
-            alpha += (math.pi/4)
+def rotate_point_planxz(rotate_center, point, alpha):
+    new_x = ((point[0] - rotate_center[0]) * math.cos(alpha)) - ((point[2] - rotate_center[2]) * math.sin(alpha)) + rotate_center[0]
+    new_y = point[1]
+    new_z = ((point[0] - rotate_center[0]) * math.sin(alpha)) + ((point[2] - rotate_center[2]) * math.cos(alpha)) + rotate_center[2]
+    return [new_x, new_y, new_z]
 
-        return matrixs
+def rotate_point_planyz(rotate_center, point, alpha):
+    new_x = point[0]
+    new_y = ((point[1] - rotate_center[1]) * math.cos(alpha)) - ((point[2] - rotate_center[2]) * math.sin(alpha)) + rotate_center[1]
+    new_z = ((point[1] - rotate_center[1]) * math.sin(alpha)) + ((point[2] - rotate_center[2]) * math.cos(alpha)) + rotate_center[2]
+    return [new_x, new_y, new_z]
+
+def get_matrices_from_points(robotVector, points, baricenter):
+    matrixs = []
+    alpha = 0
+
+    #fig = plt.figure()
+    #ax = plt.axes(projection='3d')
+    #for point in points:
+    #    ax.scatter3D(point[0], point[1], point[2], color='gray');
+
+    for i in range(7):
+        matrix = []
+        for robot in robotVector:
+            robot_roles_assigment = []
+            for point in points:
+                rotate_p = rotate_point(baricenter, point, alpha)
+                robot_role = distance_between_point(robot.getAbsolutePos(), rotate_p)
+                robot_roles_assigment.append(robot_role)
+            matrix.append(robot_roles_assigment)
+        matrixs.append(matrix)
+        alpha += (math.pi/4)
+
+    #fig.show()
+    alpha = 0
+    for i in range(7):
+        matrix = []
+        for robot in robotVector:
+            robot_roles_assigment = []
+            for point in points:
+                rotate_p = rotate_point_planyz(baricenter, point, alpha)
+                robot_role = distance_between_point(robot.getAbsolutePos(), rotate_p)
+                robot_roles_assigment.append(robot_role)
+            matrix.append(robot_roles_assigment)
+        matrixs.append(matrix)
+        alpha += (math.pi/4)
+    #fig.show()
+    alpha = 0
+    for i in range(7):
+        matrix = []
+        for robot in robotVector:
+            robot_roles_assigment = []
+            for point in points:
+                rotate_p = rotate_point_planxz(baricenter, point, alpha)
+                robot_role = distance_between_point(robot.getAbsolutePos(), rotate_p)
+                robot_roles_assigment.append(robot_role)
+            matrix.append(robot_roles_assigment)
+        matrixs.append(matrix)
+        alpha += (math.pi/4)
+    #fig.show()
+    return matrixs

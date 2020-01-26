@@ -99,7 +99,8 @@ def main_test():
         max_time = 5.0
         step_time = 0.01
         num_robots = 4
-        formation = SquareFormationDisplacementSingleIntegrator6Edges(4)
+        formation = SquareFormationDisplacementDoubleIntegrator6Edges(4)
+        #formation = SquareFormationDisplacementSingleIntegrator6Edges(4)
 
         robots_vector = make_robots_from_points_test(num_robots=num_robots, formation=formation)
 
@@ -132,9 +133,9 @@ def main_test():
             convergence_error += (total_error_list[j][i])**2
         convergence_error = math.sqrt(convergence_error / num_exp)
         error_convergence_list.append(convergence_error)
-    plt.plot(time_list, error_convergence_list, label="displacement single integrator")
-    plt.xlabel('error(e)')
-    plt.ylabel('time(s)')
+    plt.plot(time_list, error_convergence_list, label="displacement double integrator")
+    plt.ylabel('error(e)')
+    plt.xlabel('time(s)')
 
     num_exp = 100
     total_error_list = []
@@ -147,7 +148,8 @@ def main_test():
         max_time = 5.0
         step_time = 0.01
         num_robots = 4
-        formation = SquareFormationDistanceSingleIntegrator(4)
+        formation = SquareFormationDistanceDoubleIntegrator(4)
+        #formation = SquareFormationDistanceSingleIntegrator(4)
 
         robots_vector = make_robots_from_points_test(num_robots=num_robots, formation=formation)
 
@@ -180,13 +182,121 @@ def main_test():
             convergence_error += (total_error_list[j][i]) ** 2
         convergence_error = math.sqrt(convergence_error / num_exp)
         error_convergence_list.append(convergence_error)
-    plt.plot(time_list, error_convergence_list, label="distance single integrator")
-    plt.xlabel('error(e)')
-    plt.ylabel('time(s)')
+    plt.plot(time_list, error_convergence_list, label="distance double integrator")
+    plt.ylabel('error(e)')
+    plt.xlabel('time(s)')
 
     plt.legend()
     plt.show()
     print("finished test")
 
 
-main_test()
+def convergence_cubic_DI():
+    num_exp = 100
+    total_error_list = []
+    error_convergence_list = []
+
+    for i in range(num_exp):
+
+        error_list = []
+        current_time = 0
+        max_time = 5.0
+        step_time = 0.01
+        num_robots = 8
+        formation = CubeFormationDistanceDoubleIntegrator3D(4)
+
+        robots_vector = make_robots_from_points_test(num_robots=num_robots, formation=formation)
+
+        myGlobalEnviroment(robots_vector)  # crea un istanza di spazio globale
+        myGlobalEnviroment3D(robots_vector)  # crea un istanza di spazio globale 3D
+        commander = findCommander(robots_vector)
+        commander.makeSpanningTree()
+        commander.makeCostraint()
+
+        robots_vector = sorted(robots_vector, key=lambda item: item.role)
+
+        print("calcolating...")
+        while current_time < max_time:
+            current_time += step_time
+            updateRobots(robots_vector, step_time)
+            error = 0
+            for robot in robots_vector:
+                error += robot.get_error() ** 2
+            error = math.sqrt(error)
+            error_list.append(error)
+
+        total_error_list.append(error_list)
+
+    print("finished test simulation")
+    time_list = np.arange(0.0, max_time, step_time)
+    for i in range(len(time_list)):
+        convergence_error = 0
+        for j in range(num_exp):
+            convergence_error += (total_error_list[j][i]) ** 2
+        convergence_error = math.sqrt(convergence_error / num_exp)
+        error_convergence_list.append(convergence_error)
+    plt.plot(time_list, error_convergence_list, label="distance double integrator")
+    plt.ylabel('error(e)')
+    plt.xlabel('time(s)')
+
+    plt.legend()
+    plt.show()
+    print("finished test")
+
+def convergence_cubic_SI():
+    num_exp = 100
+    total_error_list = []
+    error_convergence_list = []
+
+    for i in range(num_exp):
+
+        error_list = []
+        current_time = 0
+        max_time = 5.0
+        step_time = 0.01
+        num_robots = 8
+        formation = CubeFormationDistanceSingleIntegrator3D(4)
+
+        robots_vector = make_robots_from_points_test(num_robots=num_robots, formation=formation)
+
+        myGlobalEnviroment(robots_vector)  # crea un istanza di spazio globale
+        myGlobalEnviroment3D(robots_vector)  # crea un istanza di spazio globale 3D
+        commander = findCommander(robots_vector)
+        commander.makeSpanningTree()
+        commander.makeCostraint()
+
+        robots_vector = sorted(robots_vector, key=lambda item: item.role)
+
+        print("calcolating...")
+        while current_time < max_time:
+            current_time += step_time
+            updateRobots(robots_vector, step_time)
+            error = 0
+            for robot in robots_vector:
+                error += robot.get_error() ** 2
+            error = math.sqrt(error)
+            error_list.append(error)
+
+        total_error_list.append(error_list)
+
+    print("finished test simulation")
+    time_list = np.arange(0.0, max_time, step_time)
+    for i in range(len(time_list)):
+        convergence_error = 0
+        for j in range(num_exp):
+            convergence_error += (total_error_list[j][i]) ** 2
+        convergence_error = math.sqrt(convergence_error / num_exp)
+        error_convergence_list.append(convergence_error)
+    plt.plot(time_list, error_convergence_list, label="distance single integrator")
+    plt.ylabel('error(e)')
+    plt.xlabel('time(s)')
+
+    plt.legend()
+    plt.show()
+    print("finished test")
+
+
+
+convergence_cubic_DI()
+#main_test()
+#convergence_cubic_SI()

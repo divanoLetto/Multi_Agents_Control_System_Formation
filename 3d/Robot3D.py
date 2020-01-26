@@ -207,6 +207,7 @@ class RobotDisplacementDoubleIntegrator3D(RobotDisplacement3D):
         self.deltaVelX = uX * stepTime
         self.deltaVelY = uY * stepTime
         self.deltaVelZ = uZ * stepTime
+        print("The uX control DpDI of the robot with role " + str(self.role) + " is " + str(uX))
         """
         if abs(self.deltaVelX) > setting.limit_ux_si:
             self.deltaVelX = setting.limit_ux_si * sign(self.deltaVelX)
@@ -401,7 +402,7 @@ class RobotDistanceDoubleIntegrator3D(RobotDistance3D):
         self.deltaVelX = 0
         self.deltaVelY = 0
         self.deltaVelZ = 0
-        self.kp = 1
+        self.kp = 2
         self.kv = 10
 
     def getVelX(self):
@@ -436,7 +437,7 @@ class RobotDistanceDoubleIntegrator3D(RobotDistance3D):
                 print("min_fisic_tollerance_distance in RobotDistanceSingleIntegrator")
                 absDistance = min_fisic_tollerance_distance
 
-            u_0 = (4 * (absDistance ** 2 - self.desideredDistance(n) ** 2) / absDistance) - (2 * (absDistance ** 2 - self.desideredDistance(n) ** 2) ** 2 / absDistance ** 3)
+            #u_0 = (4 * (absDistance ** 2 - self.desideredDistance(n) ** 2) / absDistance) - (2 * (absDistance ** 2 - self.desideredDistance(n) ** 2) ** 2 / absDistance ** 3)
             u_2 = self.kp * (absDistance - self.desideredDistance(n)) * absDistance
             u = u_2
             uX += u * versor[0]

@@ -578,8 +578,8 @@ class FormationDistance3D(Formation3D, ABC):
         best_idexes = []
         min = math.inf
         i = 0
+        best_matrix_num = 0
         for matrix in matrixs:
-            i += 1
             m = Munkres()
             indexes = m.compute(matrix)
             print_matrix(matrix, msg='Lowest cost through this matrix:')
@@ -590,9 +590,11 @@ class FormationDistance3D(Formation3D, ABC):
                 print(f'({row}, {column}) -> {value}')
             print(f'total cost: {total}')
             if total < min:
+                best_matrix_num = i
                 min = total
                 best_idexes = indexes
-        print("the best matrix was the number: " + str(i))
+            i += 1
+        #print("the best matrix was the number: " + str(best_matrix_num))
         self.reset_roles_connections(robotVector, best_idexes)
 
     def calcolate_baricenter(self, robotVector):
