@@ -16,5 +16,5 @@ The application let choose the following settings:
 - Space: 2D (for land vehicles) or 3D (for flying vehicles) simulation.
    
      
-<img src="https://github.com/divanoLetto/MultiAgentsControlSystemFormation/blob/master/Images/presentazione.gif" width="100%" height="100%"/>
+<img src="https://github.com/divanoLetto/MultiAgentsControlSystemFormation/blob/master/Images/presentazione.gif" width="90%" height="90%"/>
 
