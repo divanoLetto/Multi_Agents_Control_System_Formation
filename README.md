@@ -5,7 +5,7 @@ This project is focused on the analysis of automatic control laws that allow a m
 Fist we perform a study on the state-of-art techniques for multi-agents control, then we develop a graphical software application to simulate such methods and compare them to establish benefits and drawbacks of each ones.
 
 ## How to run the code 
-Run main.py then choose in the graphical interface the starting conditions of the simulation. 
+Run main.py then choose in the graphical interface the starting conditions of the simulation. \n
 The application let choose the following settings:
 - number of robots: number of agents in the formation.
 - formation: the desired formation. 
