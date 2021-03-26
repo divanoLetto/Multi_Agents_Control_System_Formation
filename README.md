@@ -17,3 +17,5 @@ The application let choose the following settings:
 <br> </br>  
 <img src="https://github.com/divanoLetto/MultiAgentsControlSystemFormation/blob/master/Images/presentazione.gif" width="100%" height="100%"/>
 
+## Formation 
+The application provide some basic formations and a tool to draw new desired formations.
