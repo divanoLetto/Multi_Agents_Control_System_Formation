@@ -17,6 +17,6 @@ The application let choose the following settings:
 <br> </br>  
 <img src="https://github.com/divanoLetto/MultiAgentsControlSystemFormation/blob/master/Images/presentazione.gif" width="100%" height="100%"/>
 
-## Formation 
+## Formations
 The application provide some basic formations such as Square, Cubic and Linear formations.   
 It's avaible also a tool to draw new desired formations or specify them by 3D cordinates points.
