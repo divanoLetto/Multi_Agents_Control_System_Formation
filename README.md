@@ -14,6 +14,7 @@ The application let choose the following settings:
 - Step time: sampling time of the simulation.
 - Max time: stop time of the simulation.
 - Space: 2D (for land vehicles) or 3D (for flying vehicles) simulation.
-
+   
+     
 <img src="https://github.com/divanoLetto/MultiAgentsControlSystemFormation/blob/master/Images/presentation_2.gif" width="70%" height="70%" />
 
