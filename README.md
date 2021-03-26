@@ -1,6 +1,6 @@
 # Analysis and Simulation of Multi-agents System Formation Control.
 
-<img src="https://github.com/divanoLetto/Multi_Agents_Control_System_Formation/blob/master/Images/icon.png" width="100%" height="100%"/>
+<img src="https://github.com/divanoLetto/Multi_Agents_Control_System_Formation/blob/master/Images/icon2.png" width="100%" height="100%"/>
 
 ## Abstract 
 This project is focused on the analysis of automatic control laws that allow a multi-agents system of robots to reach desired formations in the 3D space. 
