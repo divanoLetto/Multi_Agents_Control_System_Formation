@@ -7,9 +7,11 @@ Fist we perform a study on the state-of-art techniques for multi-agents control,
 ## How to run the code 
 Run main.py then choose in the graphical interface the starting conditions of the simulation.  
 The application let choose the following settings:
-- number of robots: number of agents in the formation.
-- formation: the desired formation. 
-- step time: sampling time of the simulation.
-- max time: stop time of the simulations.
-- space: 2D (for land vehicles) or 3D (for flying vehicles) simulation.
+- Number of robots: number of agents in the formation.
+- Formation: the desired formation. 
+- Control law: the desired control law for the agents.
+- Agents model: the model of the agents that establish its behaviour.
+- Step time: sampling time of the simulation.
+- Max time: stop time of the simulation.
+- Space: 2D (for land vehicles) or 3D (for flying vehicles) simulation.
 
