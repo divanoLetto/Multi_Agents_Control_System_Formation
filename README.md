@@ -10,7 +10,7 @@ The application let choose the following settings:
 - Number of robots: number of agents in the formation.
 - Formation: the desired formation. 
 - Control law: the desired control law for the agents.
-- Agents model: the model of the agents that establish its behaviour.
+- Agents model: the model of the agents that establish theirs behaviours.
 - Step time: sampling time of the simulation.
 - Max time: stop time of the simulation.
 - Space: 2D (for land vehicles) or 3D (for flying vehicles) simulation.
