@@ -15,5 +15,5 @@ The application let choose the following settings:
 - Max time: stop time of the simulation.
 - Space: 2D (for land vehicles) or 3D (for flying vehicles) simulation.
 
-<img src="https://github.com/divanoLetto/MultiAgentsControlSystemFormation/blob/master/Images/presentation_2.gif" width="100" height="100" />
+<img src="https://github.com/divanoLetto/MultiAgentsControlSystemFormation/blob/master/Images/presentation_2.gif" width="100%" height="100%" />
 
